@@ -1,0 +1,3 @@
+Coloca aqui las capturas (01_dynamodb_tablas.png, 02_deploy_ok.png, 03_pruebas.png, ...)
+y el archivo pruebas.txt generado por infra/pruebas.sh.
+No incluir capturas donde se vea el valor de la clave de API.
