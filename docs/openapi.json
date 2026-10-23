@@ -1,0 +1,107 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "pasarela-api-urzacom",
+    "version": "1.0.0",
+    "description": "Pasarela de APIs para consultar productos y clientes. Todas las rutas exigen la cabecera x-api-key y estan sujetas a un plan de uso (1 solicitud por segundo, rafaga de 2, cuota de 1000 por dia)."
+  },
+  "servers": [
+    {
+      "url": "https://ugd5bmejz3.execute-api.us-east-1.amazonaws.com/{basePath}",
+      "variables": { "basePath": { "default": "prod" } }
+    }
+  ],
+  "security": [ { "api_key": [] } ],
+  "paths": {
+    "/productos/{id}": {
+      "get": {
+        "summary": "Consulta un producto por id",
+        "operationId": "getProducto",
+        "parameters": [
+          {
+            "name": "id", "in": "path", "required": true,
+            "description": "Identificador del producto con formato P seguido de 3 digitos.",
+            "schema": { "type": "string", "pattern": "^P\\d{3}$", "example": "P001" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Producto encontrado",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Producto" } } }
+          },
+          "400": { "description": "Id con formato invalido (ID_INVALIDO)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "403": { "description": "Falta la clave de API o es invalida", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorGateway" } } } },
+          "404": { "description": "El producto no existe (NO_ENCONTRADO)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "429": { "description": "Se supero el limite de solicitudes del plan de uso", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorGateway" } } } }
+        }
+      }
+    },
+    "/clientes/{id}": {
+      "get": {
+        "summary": "Consulta un cliente por id",
+        "operationId": "getCliente",
+        "parameters": [
+          {
+            "name": "id", "in": "path", "required": true,
+            "description": "Identificador del cliente con formato C seguido de 3 digitos.",
+            "schema": { "type": "string", "pattern": "^C\\d{3}$", "example": "C001" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente encontrado",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Cliente" } } }
+          },
+          "400": { "description": "Id con formato invalido (ID_INVALIDO)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "403": { "description": "Falta la clave de API o es invalida", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorGateway" } } } },
+          "404": { "description": "El cliente no existe (NO_ENCONTRADO)", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } },
+          "429": { "description": "Se supero el limite de solicitudes del plan de uso", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorGateway" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "api_key": { "type": "apiKey", "name": "x-api-key", "in": "header" }
+    },
+    "schemas": {
+      "Producto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "P001" },
+          "nombre": { "type": "string", "example": "Aceite 20W50 1L" },
+          "categoria": { "type": "string", "example": "lubricantes" },
+          "precio_bs": { "type": "number", "example": 45 },
+          "stock": { "type": "integer", "example": 120 }
+        }
+      },
+      "Cliente": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "C003" },
+          "nombre": { "type": "string", "example": "Agroindustrial Norte" },
+          "ciudad": { "type": "string", "example": "Montero" },
+          "tipo": { "type": "string", "enum": ["mayorista", "minorista"] }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "codigo": { "type": "integer", "example": 400 },
+              "tipo": { "type": "string", "example": "ID_INVALIDO" },
+              "mensaje": { "type": "string" }
+            }
+          }
+        }
+      },
+      "ErrorGateway": {
+        "type": "object",
+        "description": "Respuesta generada por API Gateway (403 Forbidden, 429 Too Many Requests).",
+        "properties": { "message": { "type": "string", "example": "Forbidden" } }
+      }
+    }
+  }
+}
