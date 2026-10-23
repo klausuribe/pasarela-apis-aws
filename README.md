@@ -43,7 +43,7 @@ Diagrama: [`docs/arquitectura.png`](docs/arquitectura.png). Especificación Open
 Desde CloudShell, en la carpeta del repositorio:
 
 ```bash
-git clone <URL_DEL_REPOSITORIO> pasarela-api && cd pasarela-api
+git clone https://github.com/klausuribe/pasarela-apis-aws.git
 
 # 1. Tablas de DynamoDB y datos sintéticos
 bash infra/crear_tablas.sh
