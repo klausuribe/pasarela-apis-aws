@@ -1,0 +1,25 @@
+Fecha: Fri Oct 23 12:38:43 AM UTC 2026  Region: us-east-1
+URL: https://ugd5bmejz3.execute-api.us-east-1.amazonaws.com/prod
+
+--- 1. Valida: producto existente  (GET /productos/P001)
+{"nombre": "Aceite 20W50 1L", "precio_bs": 45, "stock": 120, "id": "P001", "categoria": "lubricantes"}
+HTTP 200
+
+--- 2. Valida: cliente existente  (GET /clientes/C003)
+{"nombre": "Agroindustrial Norte", "tipo": "mayorista", "id": "C003", "ciudad": "Montero"}
+HTTP 200
+
+--- 3. Error: id con formato invalido (400)  (GET /productos/XYZ)
+{"error": {"codigo": 400, "tipo": "ID_INVALIDO", "mensaje": "El id 'XYZ' no es valido. Formato esperado, por ejemplo: P001"}}
+HTTP 400
+
+--- 4. Error: id inexistente (404)  (GET /productos/P999)
+{"error": {"codigo": 404, "tipo": "NO_ENCONTRADO", "mensaje": "No existe producto con id P999"}}
+HTTP 404
+
+--- 5. Error: sin clave de API (403)  (GET /productos/P001)
+{"message":"Forbidden"}
+HTTP 403
+
+--- 6. Limite de solicitudes: 15 llamadas rapidas
+200 200 429 200 429 429 429 429 429 429 429 429 429 429 429
