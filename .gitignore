@@ -1,0 +1,6 @@
+.env
+function.zip
+*.pem
+*.key
+credentials
+__pycache__/
